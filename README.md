@@ -13,4 +13,4 @@ $ pip install openai aiohttp colorama pyfiglet python-dotenv
 
 Run the script using:
 
-$ python deep_research.py
+$ python deep_research-v2.py
