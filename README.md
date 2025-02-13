@@ -9,8 +9,8 @@ Install required packages:
 
 $ pip install openai aiohttp colorama pyfiglet python-dotenv
 
-# Set your EXA_API_KEY and OPENAI_API_KEY in your environment or in a .env file.
+// Set your EXA_API_KEY and OPENAI_API_KEY in your environment or in a .env file.
 
 Run the script using:
 
-$ python main.py
+$ python deep_research.py
