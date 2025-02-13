@@ -688,7 +688,7 @@ class AIChatApp(QMainWindow):
         text = text.replace("\n", "<br>")
         text = text.encode('utf-16', 'surrogatepass').decode('utf-16')
         text = self.apply_whatsapp_tags(text)
-                text = re.sub(r'@#%', r'*', text)
+        text = re.sub(r'@#%', r'*', text)
         return text
 
     def apply_whatsapp_tags(self, text):
