@@ -1,0 +1,320 @@
+https://chatgpt.com/share/67adcc20-0154-800d-9c30-1422d4d1724e
+
+Below is the comprehensive technical design specification document for the improved “Deep Research” Python tool. This document explains the overall architecture, design decisions, logic, and usage details. The specification is organized into several sections to cover configuration, modular structure, concurrency, recursion, error handling, logging, API integrations, and testing. Code snippets from the source are provided throughout to clarify key points.
+
+---
+
+### 1. Overview
+
+The “Deep Research” tool is designed to automate the process of researching a topic by recursively generating sub-questions, performing web searches, scraping pages, summarizing content, and synthesizing the findings into a final comprehensive report. The tool leverages external APIs including OpenAI’s GPT models for natural language processing and ZenRows for web scraping with JavaScript rendering and antibot bypass. The design emphasizes modularity, concurrency, robust error handling, and clear logging to enable efficient research across multiple sub-questions.
+
+---
+
+### 2. Architectural Design
+
+The tool is structured into distinct functional modules:
+- **Sub-question Generation**: Uses OpenAI’s GPT model to generate deeper inquiries from a given research topic.
+- **Web Scraping**: Integrates ZenRows to scrape search result pages and extract content.
+- **Content Summarization**: Uses OpenAI’s GPT model to summarize the scraped content with relevance to the original query.
+- **Result Synthesis**: Aggregates and synthesizes summaries into a final comprehensive answer.
+- **Recursion & Concurrency**: Implements recursion for deeper research levels and employs concurrency for efficient scraping.
+- **Logging & Error Handling**: Uses Python’s logging module and try/except blocks to ensure robustness.
+
+The high-level flow is as follows:
+1. **Input Validation** – Ensures that a valid research topic is provided.
+2. **Sub-question Generation** – Creates a list of related sub-questions.
+3. **Search and Scrape** – Performs Google searches for each sub-question and scrapes the top result pages.
+4. **Summarization** – Processes each scraped page to produce summaries.
+5. **Synthesis** – Combines summaries into a final report.
+6. **Recursion** – Optionally deepens the research with further recursive calls.
+
+---
+
+### 3. Detailed Module Descriptions
+
+#### 3.1 Configuration and Constants
+
+The configuration section retrieves API keys from environment variables and defines constants for parameters like maximum sub-questions, recursion depth, and concurrency. This allows easy customization:
+
+```python
+# --- Configuration ---
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+ZENROWS_API_KEY = os.environ.get("ZENROWS_API_KEY")
+
+# --- Constants ---
+MAX_SUBQUESTIONS = 5            # Maximum sub-questions per level
+MAX_RECURSION_DEPTH = 2         # Maximum recursion depth for deeper inquiry
+MAX_SUMMARY_LENGTH = 300        # Maximum word count for each summary
+ZENROWS_CONCURRENCY = 5         # Number of concurrent requests
+```
+
+This setup isolates sensitive information and configurable parameters, making it simple to adjust the tool’s behavior without modifying core logic.
+
+#### 3.2 Logging and Error Handling
+
+Robust logging is implemented using Python’s built-in logging module. This provides timestamps, log levels, and messages to help trace execution and debug issues:
+
+```python
+import logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+```
+
+Error handling is applied in every external API call and network operation to ensure graceful degradation if an error occurs. For example, when calling the OpenAI API in `generate_subquestions`, errors are caught and logged:
+
+```python
+try:
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful research assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=200 * MAX_SUBQUESTIONS,
+    )
+except openai.OpenAIError as e:
+    logging.error(f"Error calling OpenAI API: {e}")
+    return []
+```
+
+#### 3.3 Sub-Question Generation
+
+This module uses the OpenAI API to generate related sub-questions, which drive the depth of research. The function builds a prompt with the research query and, if available, previous summaries to help refine the inquiry:
+
+```python
+def generate_subquestions(query: str, existing_results: str = None, depth: int = 0) -> list:
+    # ... (configuration and prompt preparation)
+    prompt = (f"Generate a list of up to {MAX_SUBQUESTIONS} detailed sub-questions for in-depth research on the topic: "
+              f"'{query}'. ")
+    if existing_results:
+        prompt += f"Consider these existing findings:\n{existing_results}\nGenerate NEW sub-questions that explore unanswered aspects or delve deeper."
+    prompt += " Return the sub-questions as a numbered list."
+    # API call and response parsing follow...
+```
+
+The function extracts numbered list items using regular expressions. This modular approach allows for potential future upgrades, such as supporting multiple languages (e.g., English and Simplified Chinese).
+
+#### 3.4 Web Scraping with ZenRows
+
+ZenRows is employed to fetch rendered web pages reliably. The function `scrape_page` uses custom parameters (JavaScript rendering, antibot bypass, premium proxies) to retrieve HTML content:
+
+```python
+def scrape_page(url: str, client: ZenRowsClient) -> str:
+    try:
+        params = {
+            "url": url,
+            "js_render": "true",
+            "antibot": "true",
+            "premium_proxy": "true",
+        }
+        response = client.get(url, params=params)
+        response.raise_for_status()
+        return response.text
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error scraping {url}: {e}")
+        return ""
+```
+
+For handling multiple pages, the `batch_scrape_pages` function utilizes a `ThreadPoolExecutor` to process requests concurrently:
+
+```python
+def batch_scrape_pages(urls: list, client: ZenRowsClient) -> list:
+    responses_content = []
+    with ThreadPoolExecutor(max_workers=ZENROWS_CONCURRENCY) as executor:
+        future_to_url = {executor.submit(scrape_page, url, client): url for url in urls}
+        for future in as_completed(future_to_url):
+            try:
+                content = future.result()
+                responses_content.append(content)
+            except Exception as exc:
+                logging.error(f"Error scraping {future_to_url[future]}: {exc}")
+    return responses_content
+```
+
+This design choice improves performance and scalability, especially when processing multiple sub-questions.
+
+#### 3.5 Content Extraction and Summarization
+
+After scraping, the raw HTML content is cleaned using BeautifulSoup in the `extract_text_from_html` function. This removes unnecessary elements like scripts and styles:
+
+```python
+def extract_text_from_html(html_content: str) -> str:
+    soup = BeautifulSoup(html_content, "lxml")
+    for tag in soup(["script", "style"]):
+        tag.decompose()
+    text = soup.get_text(separator=" ", strip=True)
+    return text
+```
+
+Once the text is extracted, the summarization module calls OpenAI’s GPT model to produce a concise summary that emphasizes the relationship with the research query:
+
+```python
+def summarize_content(text: str, query: str) -> str:
+    prompt = (f"Summarize the following text in at most {MAX_SUMMARY_LENGTH} words, focusing on how it relates "
+              f"to the question: '{query}'.\n\nText:\n{text}")
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a concise and accurate summarization assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=MAX_SUMMARY_LENGTH * 2,
+        )
+        summary = response.choices[0].message.content.strip()
+        logging.info(f"Generated summary (length: {len(summary.split())} words)")
+        return summary
+    except openai.OpenAIError as e:
+        logging.error(f"Error calling OpenAI API: {e}")
+        return "Error: Could not generate summary."
+```
+
+This module is critical for condensing extensive web page content into actionable insights.
+
+#### 3.6 Synthesis of Results
+
+Once multiple summaries are collected, they are synthesized into one final answer using the `synthesize_results` function. This function constructs a comprehensive prompt that includes each summary with numbered citations, then calls the OpenAI API to produce a unified report:
+
+```python
+def synthesize_results(summaries: list, original_query: str) -> str:
+    prompt = f"Synthesize the following summaries into a comprehensive answer to the research question: '{original_query}'. " \
+             "Include citations referring to the summary numbers.\n\n"
+    for i, summary in enumerate(summaries):
+        prompt += f"{i+1}. {summary}\n"
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a research assistant that synthesizes information from multiple sources."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=500,
+        )
+        synthesis = response.choices[0].message.content.strip()
+        logging.info("Final synthesis generated.")
+        return synthesis
+    except openai.OpenAIError as e:
+        logging.error(f"Error calling OpenAI API: {e}")
+        return "Error: Could not synthesize results."
+```
+
+This design enables the tool to produce a coherent narrative that references the underlying sources of information.
+
+#### 3.7 Recursive Research
+
+A unique aspect of the tool is its recursive capability. The `deep_research` function is designed to:
+- Generate sub-questions for the initial query.
+- Iterate over each sub-question to fetch and summarize content.
+- Optionally invoke itself recursively (within a set maximum depth) to further explore topics.
+  
+This recursion is managed through the `depth` parameter and controlled by the constant `MAX_RECURSION_DEPTH`. Here’s an excerpt from the recursive logic:
+
+```python
+def deep_research(query: str, depth: int = 0, prev_summaries: list = None) -> (list, list):
+    logging.info(f"Starting research on: '{query}' (depth {depth})")
+    if depth > MAX_RECURSION_DEPTH:
+        logging.info("Max recursion depth reached.")
+        return (prev_summaries if prev_summaries else [], [])
+    
+    # Generate sub-questions
+    existing_results = " ".join(prev_summaries) if prev_summaries else None
+    subquestions = generate_subquestions(query, existing_results, depth)
+    if not subquestions:
+        logging.info("No sub-questions generated.")
+        return (prev_summaries if prev_summaries else [], [])
+    
+    # Process each sub-question...
+    # [Scraping and summarization logic follows]
+    
+    # Recursively deepen the research if within allowed depth
+    if depth < MAX_RECURSION_DEPTH:
+        deeper_summaries, deeper_urls = deep_research(query, depth + 1, all_summaries)
+        all_summaries.extend(deeper_summaries)
+        all_urls.extend(deeper_urls)
+    
+    return (all_summaries, all_urls)
+```
+
+This recursive design allows the tool to simulate a more thorough research process, where each subsequent layer refines the overall findings.
+
+#### 3.8 Concurrency in Web Scraping
+
+Web scraping is often a time-sensitive operation. By using Python’s `ThreadPoolExecutor`, the design allows multiple pages to be scraped in parallel, significantly reducing the overall processing time. This concurrency model is encapsulated in the `batch_scrape_pages` function as described earlier.
+
+#### 3.9 API Integrations and External Dependencies
+
+The tool integrates two main external APIs:
+- **OpenAI GPT API**: Used for generating sub-questions, summarizing text, and synthesizing final results. The design carefully checks for the presence of an API key and handles errors gracefully.
+- **ZenRows API**: Used for scraping web pages with capabilities like JavaScript rendering and antibot mechanisms. The API is encapsulated within helper functions to facilitate reuse and future modifications.
+
+Both APIs are abstracted in separate functions, which enhances modularity and simplifies testing.
+
+#### 3.10 Usage and Execution
+
+The main execution block of the script handles user input and triggers the research process:
+
+```python
+if __name__ == "__main__":
+    try:
+        research_topic = ""
+        while not research_topic.strip():
+            research_topic = input("Enter your research topic: ").strip()
+            if not research_topic:
+                print("Please enter a valid research topic.")
+        if not ZENROWS_API_KEY:
+            logging.warning("ZenRows API key not found. Set the ZENROWS_API_KEY environment variable.")
+        if not OPENAI_API_KEY:
+            logging.warning("OpenAI API key not found. Set the OPENAI_API_KEY environment variable.")
+        summaries, urls = deep_research(research_topic)
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
+```
+
+This block:
+- Validates that the user provides a research topic.
+- Warns the user if the required API keys are missing.
+- Initiates the deep research process and logs any unexpected errors.
+
+---
+
+### 4. Design Decisions and Rationale
+
+1. **Modularity**: Each functionality (sub-question generation, scraping, summarization, synthesis) is encapsulated in its own function. This separation of concerns allows for easy maintenance, unit testing, and future extensions.
+2. **Concurrency**: Web scraping can be slow due to network latency. By using a thread pool, the tool significantly reduces waiting times when scraping multiple pages.
+3. **Error Handling**: Robust error handling is critical when dealing with network operations and external APIs. The design uses try/except blocks to ensure that errors in one component do not cascade and terminate the entire research process.
+4. **Recursion**: Recursion is employed to simulate in-depth research by iteratively refining the query and exploring additional sub-questions. The depth is controlled to prevent runaway recursion.
+5. **API Abstraction**: Abstracting external API calls into dedicated functions allows for flexibility. If an API’s behavior changes or a new API is preferred, modifications can be localized without impacting the overall design.
+6. **Logging**: Detailed logging provides traceability and aids in debugging. It is especially useful for understanding the flow during recursive calls and concurrent scraping.
+7. **Scalability and Extensibility**: By defining constants (like `MAX_SUBQUESTIONS` and `ZENROWS_CONCURRENCY`), the tool can be tuned to suit different usage scenarios—from lightweight research tasks to more intensive investigations.
+
+---
+
+### 5. Testing and Verification
+
+The design includes implicit testability:
+- **Unit Testing**: Each helper function (e.g., `generate_subquestions`, `scrape_page`, `summarize_content`) is designed to operate independently, making unit tests straightforward.
+- **Integration Testing**: The `deep_research` function serves as the integration point, where the full workflow can be tested with mock API responses.
+- **Error Scenarios**: The extensive use of logging and error handling helps identify issues during development and in production. For example, network errors or API failures will be logged without crashing the tool.
+
+In a production environment, automated tests could simulate API responses to verify that summaries and synthesized reports are generated correctly.
+
+---
+
+### 6. Future Enhancements
+
+While the current design meets the primary goals, future iterations might consider:
+- **Multilingual Support**: Although the current implementation supports English, additional logic could enable automated translation and support for Simplified Chinese.
+- **Enhanced Search Filtering**: More sophisticated parsing of search result pages could be implemented to filter out irrelevant links more effectively.
+- **GUI Integration**: A web or desktop interface could be developed to allow non-technical users to interact with the tool easily.
+- **Caching and Persistence**: Implementing caching for API responses and scraped pages would improve performance and reduce redundant network calls.
+- **Rate Limiting and Throttling**: Advanced error handling around API rate limits could further stabilize the tool in high-demand scenarios.
+
+---
+
+### 7. Conclusion
+
+The improved “Deep Research” tool is a robust, modular, and scalable Python application designed to automate deep research tasks. Its thoughtful architecture—with clear separation of concerns, concurrency for efficiency, robust error handling, and recursive inquiry—ensures it meets the demands of in-depth research. The integration with modern APIs (OpenAI and ZenRows) further enhances its ability to generate meaningful insights from diverse web sources.
+
+This technical design specification should serve both as documentation for developers looking to extend the tool and as a detailed reference for understanding its inner workings. The inclusion of code snippets and clear rationales for each design decision provides a thorough understanding of the tool’s functionality and future potential.
+
+*Usage:*  
+To run the tool, set the appropriate environment variables (`OPENAI_API_KEY` and `ZENROWS_API_KEY`), then execute the script in a terminal. The tool will prompt for a research topic and proceed with the deep research workflow, logging progress and errors along the way.
