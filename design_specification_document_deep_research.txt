@@ -1,0 +1,319 @@
+https://chatgpt.com/share/67adc397-84e0-800c-bc5b-f99829466001
+
+Below is the complete technical design specification document for the newly generated and improved Python code for the deep research agent. This document explains the design, logic, usage, and implementation details of the code. It includes code snippets from the codebase to help clarify each section.
+
+---
+
+# Deep Research – Technical Design Specification
+
+## 1. Overview
+
+The "Deep Research" system is an enhanced deep research tool that leverages multiple APIs, asynchronous web requests, and advanced language model interactions to simulate a research analyst. Its primary goal is to execute a multi-step, iterative research workflow based on a user-provided query. The system uses a combination of the Exa search API and OpenAI’s ChatGPT (via the `gpt-4-turbo` model) to produce a detailed, structured report with inline citations.
+
+Key features of the design include:
+
+- **Iterative Research Workflow:** The agent continuously refines its research plan over a series of iterations.
+- **Asynchronous API Calls:** To speed up external calls to the Exa search API, asynchronous HTTP requests are implemented.
+- **Modular Structure:** The code is organized into separate functions and a main class to enhance maintainability and readability.
+- **Logging and Error Handling:** Robust logging and error checking ensure that issues are captured and the process is resilient.
+- **Structured Output and Final Synthesis:** The system synthesizes all intermediate research steps into a final, well-organized Markdown report.
+
+---
+
+## 2. System Architecture
+
+The design can be broken down into several logical layers:
+
+### 2.1 Input Layer
+- **User Query:** The system starts by receiving a research query via the command-line input.
+- **Environment Configuration:** API keys and runtime parameters are loaded from environment variables (optionally via `python-dotenv`).
+
+### 2.2 Research Agent Core
+- **Iterative Workflow Engine:** The `ResearchAgent` class governs the iterative process. It maintains a context list of research steps and manages the flow from generating a search query to synthesizing the final report.
+- **Research Step Generation:** The function `generate_research_step()` constructs the next search query by leveraging previous context. It interacts with OpenAI’s language model to produce a JSON structure that includes the search query, reasoning, and an overall plan.
+- **Search Execution:** The `exa_search()` function handles calling the Exa search API asynchronously. This is achieved with the `aiohttp` library, ensuring non-blocking I/O.
+- **Results Processing:** The `process_search_results()` function formats and summarizes the results received from Exa.
+
+### 2.3 Output and Reporting Layer
+- **Final Report Generation:** After completing the research iterations, the `generate_final_report()` function synthesizes all the research steps into a comprehensive report, preserving inline citations and formatting the output in Markdown.
+- **User Display:** The final report and detailed context are printed to the console for the user.
+
+---
+
+## 3. Detailed Component Descriptions
+
+### 3.1 Environment and Configuration
+The system requires two critical environment variables: `EXA_API_KEY` and `OPENAI_API_KEY`. These are read at the beginning of the execution. If not found, the system logs an error and exits.
+
+```python
+EXA_API_KEY = os.getenv("EXA_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+if not EXA_API_KEY or not OPENAI_API_KEY:
+    logging.error("Missing required API keys. Please set EXA_API_KEY and OPENAI_API_KEY in your environment.")
+    exit(1)
+```
+
+Additionally, the maximum number of iterations (i.e., the depth of research) is configurable via an environment variable (`MAX_ITERATIONS`).
+
+---
+
+### 3.2 Asynchronous Search Execution
+
+The `exa_search()` function is designed to perform asynchronous HTTP POST requests using `aiohttp`. This improves overall system responsiveness by not blocking the main loop while waiting for the Exa API to return results.
+
+```python
+async def exa_search(query: str) -> dict:
+    headers = {"x-api-key": EXA_API_KEY, "Content-Type": "application/json"}
+    payload = {"query": query, "stream": False, "text": True, "mode": "fast"}
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{EXA_BASE_URL}/search", json=payload, headers=headers) as response:
+            if response.status != 200:
+                logging.error(f"Exa search failed with status {response.status}")
+                return {}
+            return await response.json()
+```
+
+This snippet illustrates how the function builds the payload, sends the request, and processes the response in a non-blocking manner.
+
+---
+
+### 3.3 Processing Search Results
+
+The `process_search_results()` function is responsible for taking the raw JSON response from the Exa API and generating a readable summary. It extracts titles, URLs, content excerpts, and any highlighted points.
+
+```python
+def process_search_results(results: dict) -> str:
+    if not results.get("results"):
+        return "No relevant results found"
+    summary_lines = []
+    for result in results["results"]:
+        title = result.get("title", "Untitled")
+        url = result.get("url", "No URL provided")
+        text_excerpt = result.get("text", "")[:200].strip()
+        highlights = result.get("highlights", [])
+        summary_lines.append(f"### {title}")
+        summary_lines.append(f"**URL:** {url}")
+        summary_lines.append(f"**Content:** {text_excerpt}...")
+        if highlights:
+            summary_lines.append("**Highlights:**")
+            for item in highlights:
+                summary_lines.append(f"- {item}")
+        summary_lines.append("")
+    return "\n".join(summary_lines)
+```
+
+This design ensures that each search result is transformed into a concise Markdown snippet, which is then incorporated into the final report.
+
+---
+
+### 3.4 Research Step Generation
+
+The function `generate_research_step()` is a critical component that interacts with the OpenAI language model. It creates a conversation history that includes both the user query and previous research steps. This history is then used to generate the next research step in JSON format.
+
+```python
+def generate_research_step(user_query: str, context: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    messages = [{"role": "system", "content": SYS_PROMPT},
+                {"role": "user", "content": user_query}]
+    for step in context:
+        messages.append({
+            "role": "assistant",
+            "content": json.dumps({
+                "action": "exa_search",
+                "query": step["query"],
+                "reasoning": step["reasoning"],
+                "plan": step["plan"]
+            })
+        })
+        messages.append({
+            "role": "system",
+            "content": f"Search Results from '{step['query']}':\n{step['results']}"
+        })
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=messages,
+            temperature=0.3,
+            response_format={"type": "json_object"},
+        )
+        content = response.choices[0].message.content
+        step_output = json.loads(content)
+        return step_output
+    except Exception as e:
+        logging.error(f"Error generating research step: {e}")
+        return None
+```
+
+In this snippet, the context from previous iterations is appended to the messages. The response is expected to be a JSON object containing keys such as `"query"`, `"reasoning"`, and `"plan"`, which will drive the next search action.
+
+---
+
+### 3.5 Final Report Synthesis
+
+Once all research iterations have been completed, the final report is generated using the `generate_final_report()` function. This function aggregates all individual research steps and synthesizes them into a coherent report. It again calls the OpenAI API for language synthesis.
+
+```python
+def generate_final_report(context: List[Dict[str, Any]]) -> str:
+    research_history = "\n\n".join(
+        f"## Research Step {i+1}\n**Query:** {step['query']}\n**Results:**\n{step['results']}"
+        for i, step in enumerate(context)
+    )
+    messages = [
+        {"role": "system", "content": SYS_PROMPT + "\nMaintain the inline citations from the research data in the final answer. Provide output in Markdown."},
+        {"role": "user", "content": f"Synthesize a final, detailed report using the following research data:\n\n{research_history}"}
+    ]
+    response = openai_client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=messages,
+        temperature=0.5,
+    )
+    return response.choices[0].message.content
+```
+
+This process uses all the stored context from the iterations and instructs the model to produce an in-depth final report with proper formatting and citation retention.
+
+---
+
+### 3.6 The ResearchAgent Class
+
+The `ResearchAgent` class encapsulates the overall research process. It maintains the research context, iterates through the research steps, and finally generates the report. It also logs progress at each iteration.
+
+```python
+class ResearchAgent:
+    def __init__(self, max_iterations: int = MAX_ITERATIONS):
+        self.context: List[Dict[str, Any]] = []
+        self.max_iterations = max_iterations
+
+    async def execute_research_plan(self, user_query: str) -> str:
+        logging.info("Initializing research plan...")
+        for i in range(self.max_iterations):
+            logging.info(f"--- Iteration {i+1} ---")
+            research_step = generate_research_step(user_query, self.context)
+            if not research_step or not research_step.get("query"):
+                logging.error("No search query generated; terminating iteration.")
+                break
+            logging.info(f"Search Query: {research_step['query']}")
+            search_results = await exa_search(research_step["query"])
+            processed_results = process_search_results(search_results)
+            self.context.append({
+                "query": research_step["query"],
+                "reasoning": research_step.get("reasoning", ""),
+                "plan": research_step.get("plan", ""),
+                "results": processed_results
+            })
+            logging.info(f"Search Results (truncated): {processed_results[:500]}...")
+            if "no relevant results" in processed_results.lower():
+                logging.error("Terminating due to lack of relevant results.")
+                break
+            time.sleep(1)
+        logging.info("Generating final report...")
+        return generate_final_report(self.context)
+```
+
+Key points in the class design include:
+- **Iteration Control:** The agent iterates a fixed number of times (configurable via `MAX_ITERATIONS`), unless terminated early due to insufficient search results.
+- **Context Management:** Every iteration appends a dictionary containing the query, reasoning, plan, and processed search results. This context is essential for generating subsequent research steps.
+- **Integration with Asynchronous Search:** The `execute_research_plan()` method is an asynchronous coroutine that awaits the `exa_search()` function.
+
+---
+
+### 3.7 User Interface and Banner Display
+
+A simple banner is displayed using the `pyfiglet` library for a polished command-line interface. This gives a visual cue to the user about the tool’s identity.
+
+```python
+def display_banner() -> None:
+    banner = pyfiglet.figlet_format("Deeper Seeker v2")
+    print(Fore.CYAN + banner + Style.RESET_ALL)
+```
+
+The main entry point of the program invokes the banner display, reads the user input, and then executes the research plan asynchronously.
+
+---
+
+### 3.8 Main Function and Execution
+
+The entry point of the application is defined in the `main()` function. It uses Python’s `asyncio` library to run the asynchronous workflow and displays both the final report and the complete research context.
+
+```python
+async def main() -> None:
+    display_banner()
+    agent = ResearchAgent()
+    user_query = input("Enter your research query: ").strip()
+    if not user_query:
+        logging.error("Empty query provided. Exiting.")
+        return
+    final_report = await agent.execute_research_plan(user_query)
+    print(f"\n{Fore.GREEN}=== FINAL REPORT ==={Style.RESET_ALL}\n")
+    print(final_report)
+    print(f"\n{Fore.CYAN}=== RESEARCH CONTEXT ==={Style.RESET_ALL}\n")
+    print(json.dumps(agent.context, indent=2))
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+This structure ensures that:
+- The research agent is created and initialized.
+- The user query is validated.
+- The asynchronous research workflow is executed.
+- The final report and context are printed in an easy-to-read JSON format.
+
+---
+
+## 4. Usage and Deployment
+
+### 4.1 Prerequisites
+
+Before running the system, the following dependencies must be installed:
+- `openai`
+- `aiohttp`
+- `colorama`
+- `pyfiglet`
+- `python-dotenv` (optional, for environment management)
+
+Install these dependencies using pip:
+```bash
+pip install openai aiohttp colorama pyfiglet python-dotenv
+```
+
+### 4.2 Environment Setup
+
+Ensure that the environment variables `EXA_API_KEY` and `OPENAI_API_KEY` are set either in your system or in a `.env` file.
+
+### 4.3 Running the Application
+
+To run the application, execute:
+```bash
+python main.py
+```
+You will see a banner, be prompted for a research query, and after processing, the final report will be printed on the console.
+
+---
+
+## 5. Design Considerations
+
+### 5.1 Asynchronous Programming
+Using asynchronous calls (with `aiohttp` and `asyncio`) is crucial for reducing latency when calling external APIs. This design ensures that the agent can continue processing without waiting for long-running network calls.
+
+### 5.2 Robust Logging
+The built-in logging provides real-time feedback on the application’s status. This helps developers diagnose issues quickly, especially when dealing with API failures or JSON parsing errors.
+
+### 5.3 Modular and Extensible Codebase
+Each functional component (search, processing, synthesis) is encapsulated in its own function. This modularity makes it easier to extend the system—for example, integrating additional APIs or enhancing the reasoning logic—without rewriting the entire codebase.
+
+### 5.4 Structured Communication with OpenAI
+By constructing messages with system and user roles, the design leverages OpenAI’s chat API to maintain a conversation context. This helps in generating step-by-step research plans and synthesizing a final report that integrates inline citations.
+
+### 5.5 Inline Citations
+The design places an emphasis on preserving inline citations. Both during the iterative search process and the final report generation, the inline citations from the Exa search results are retained. This is critical for a research analyst tool where source verification is essential.
+
+---
+
+## 6. Conclusion
+
+The "Deeper Seeker v2" research agent is designed to simulate the workflow of a junior research analyst. With its asynchronous search capabilities, modular design, and iterative refinement process, the tool is capable of generating detailed, actionable reports with inline citations from multiple sources. The design focuses on reliability, clarity, and extensibility—allowing future enhancements and the integration of additional research tools. This specification provides a comprehensive understanding of the architecture, the logic behind each component, and the overall workflow, ensuring that both developers and stakeholders have a clear view of the system’s operation and potential for future growth.
+
+---
+
+This document should serve as a detailed guide for developers to understand, maintain, and extend the functionality of the improved Python code for the "Deeper Seeker" system.
