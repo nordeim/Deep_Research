@@ -13,4 +13,4 @@ $ pip install openai aiohttp colorama pyfiglet python-dotenv zenrows
 
 Run the script using:
 
-$ python deep_research-v3.py
+$ python simple_chat_gui_deep_research.py ## deep_research-v3.py # cli
