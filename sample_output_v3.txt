@@ -1,0 +1,160 @@
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:01:32,329 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:01:33,772 [INFO] error_code=insufficient_quota error_message='You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.' error_param=None error_type=insufficient_quota message='OpenAI API error received' stream_error=False
+2025-02-13 19:01:33,774 [ERROR] Error calling OpenAI API: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.
+2025-02-13 19:01:33,779 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:04:46,892 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:04:47,867 [INFO] error_code=invalid_api_key error_message='Incorrect API key provided: sk-proj-********************************************************************************************************************************************************VkcA. You can find your API key at https://platform.openai.com/account/api-keys.' error_param=None error_type=invalid_request_error message='OpenAI API error received' stream_error=False
+2025-02-13 19:04:47,868 [ERROR] Error calling OpenAI API: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************VkcA. You can find your API key at https://platform.openai.com/account/api-keys.
+2025-02-13 19:04:47,871 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:05:47,716 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:05:49,052 [INFO] error_code=insufficient_quota error_message='You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.' error_param=None error_type=insufficient_quota message='OpenAI API error received' stream_error=False
+2025-02-13 19:05:49,053 [ERROR] Error calling OpenAI API: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.
+2025-02-13 19:05:49,058 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:06:38,053 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:06:38,997 [INFO] error_code=insufficient_quota error_message='You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.' error_param=None error_type=insufficient_quota message='OpenAI API error received' stream_error=False
+2025-02-13 19:06:38,998 [ERROR] Error calling OpenAI API: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.
+2025-02-13 19:06:39,003 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:07:40,046 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:07:41,596 [INFO] error_code=insufficient_quota error_message='You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.' error_param=None error_type=insufficient_quota message='OpenAI API error received' stream_error=False
+2025-02-13 19:07:41,597 [ERROR] Error calling OpenAI API: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.
+2025-02-13 19:07:41,602 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:09:20,623 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:09:22,314 [INFO] error_code=insufficient_quota error_message='You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.' error_param=None error_type=insufficient_quota message='OpenAI API error received' stream_error=False
+2025-02-13 19:09:22,316 [ERROR] Error calling OpenAI API: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.
+2025-02-13 19:09:22,321 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:10:13,247 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:10:29,543 [INFO] error_code=insufficient_quota error_message='You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.' error_param=None error_type=insufficient_quota message='OpenAI API error received' stream_error=False
+2025-02-13 19:10:29,544 [ERROR] Error calling OpenAI API: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.
+2025-02-13 19:10:29,552 [INFO] No sub-questions generated.
+
+(venv) H:\venv>python deep_research-v3.py
+Enter your research topic: step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use
+2025-02-13 19:12:47,920 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 0)
+2025-02-13 19:12:56,567 [INFO] Generated sub-questions (depth 0): ['**What are the necessary prerequisites and environment setup required for training an open-source LLM using HuggingFace, particularly in the context of medical data for diagnosis?**', '**How can one preprocess and prepare a medical dataset for training a language model, and which specific preprocessing techniques are most effective for achieving optimal results in medical diagnosis tasks?**', '**What are the steps to fine-tune a pre-trained LLM from the HuggingFace repository on a medical dataset, and how can hyperparameter tuning be effectively conducted to improve model performance in diagnosis?**', '**How can evaluation metrics and methodologies be applied to assess the performance of the fine-tuned LLM on a medical diagnosis task, and what benchmarks exist for comparison within the medical field?**', '**What are the ethical considerations and regulatory compliance aspects involved in deploying an LLM for medical diagnosis, and how can one ensure adherence to these standards during the project lifecycle?**']
+2025-02-13 19:12:56,569 [INFO] Searching for sub-question 1: **What are the necessary prerequisites and environment setup required for training an open-source LLM using HuggingFace, particularly in the context of medical data for diagnosis?**
+2025-02-13 19:13:01,039 [INFO] Found 0 relevant pages for sub-question 1.
+2025-02-13 19:13:01,039 [INFO] Searching for sub-question 2: **How can one preprocess and prepare a medical dataset for training a language model, and which specific preprocessing techniques are most effective for achieving optimal results in medical diagnosis tasks?**
+2025-02-13 19:13:05,106 [INFO] Found 0 relevant pages for sub-question 2.
+2025-02-13 19:13:05,107 [INFO] Searching for sub-question 3: **What are the steps to fine-tune a pre-trained LLM from the HuggingFace repository on a medical dataset, and how can hyperparameter tuning be effectively conducted to improve model performance in diagnosis?**
+2025-02-13 19:13:10,942 [INFO] Found 0 relevant pages for sub-question 3.
+2025-02-13 19:13:10,942 [INFO] Searching for sub-question 4: **How can evaluation metrics and methodologies be applied to assess the performance of the fine-tuned LLM on a medical diagnosis task, and what benchmarks exist for comparison within the medical field?**
+2025-02-13 19:13:16,650 [INFO] Found 0 relevant pages for sub-question 4.
+2025-02-13 19:13:16,651 [INFO] Searching for sub-question 5: **What are the ethical considerations and regulatory compliance aspects involved in deploying an LLM for medical diagnosis, and how can one ensure adherence to these standards during the project lifecycle?**
+2025-02-13 19:13:19,611 [INFO] Found 0 relevant pages for sub-question 5.
+2025-02-13 19:13:27,162 [INFO] Final synthesis generated.
+2025-02-13 19:13:27,163 [INFO]
+--- Final Research Report ---
+To train an open source language model (LLM) from the Hugging Face repository for medical diagnosis, you can follow these structured steps. This guide includes Python code samples that enable you to get started efficiently.
+
+### Step 1: Environment Setup
+
+First, ensure you have Python (3.6 or later) installed along with necessary libraries. Install the `transformers`, `datasets`, and `torch` libraries using pip:
+
+```bash
+pip install transformers datasets torch
+```
+
+### Step 2: Choosing a Model
+
+Visit the Hugging Face Model Hub and select a suitable pre-trained LLM for medical tasks (e.g., BioBERT, ClinicalBERT, or similar). You can start with an available model that has been trained on biomedical texts for better performance in the medical domain.
+
+### Step 3: Data Collection and Preprocessing
+
+Gather medical datasets for training. For instance, datasets like MIMIC-III or PubMed abstracts can be useful. Preprocess your data into a suitable format: usually a CSV or JSON file containing pairs of prompts and expected responses.
+
+```python
+import pandas as pd
+
+# Load your dataset
+data = pd.read_csv('medical_dataset.csv')
+print(data.head())
+```
+
+### Step 4: Tokenization
+
+Tokenize the dataset using the tokenizer associated with your chosen model:
+
+```python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained('model_name')
+
+def tokenize_function(examples):
+    return tokenizer(examples['text'], padding="max_length", truncation=True)
+
+tokenized_datasets = datasets.map(tokenize_function, batched=True)
+```
+
+### Step 5: Model Configuration
+
+Configure your model for fine-tuning. Depending on your task (like question-answering or text generation), load the corresponding pre-trained model:
+
+```python
+from transformers import AutoModelForSequenceClassification
+
+model = AutoModelForSequenceClassification.from_pretrained('model_name', num_labels=2)
+```
+
+### Step 6: Training the Model
+
+Define your training arguments and use the Trainer API from Hugging Face. Adjust parameters such as learning rate, batch size, and epoch count for optimal results.
+
+```python
+from transformers import Trainer, TrainingArguments
+
+training_args = TrainingArguments(
+    output_dir="./results",
+    evaluation_strategy="epoch",
+    learning_rate=2e-5,
+    per_device_train_batch_size=16,
+    num_train_epochs=3,
+)
+
+trainer = Trainer(
+    model
+2025-02-13 19:13:27,166 [INFO]
+--- Sources ---
+2025-02-13 19:13:27,168 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 1)
+2025-02-13 19:13:37,830 [INFO] Generated sub-questions (depth 1): ["**What are the prerequisites and foundational knowledge required for training a large language model (LLM) using HuggingFace's Transformers library, particularly in the context of medical diagnosis?**", '**How can you customize and preprocess a medical dataset for training an LLM, and what best practices should be followed to ensure data quality and relevance?**', '**What are the specific Python code examples and configurations needed to fine-tune a pre-trained LLM from the HuggingFace repository for a medical diagnosis task?**', '**What metrics and evaluation methods are most appropriate for assessing the performance of a fine-tuned LLM in medical diagnosis, and how can these be implemented in Python?**', '**What are the common challenges and troubleshooting tips when training an LLM for medical diagnosis, and how can users effectively address issues related to model convergence, overfitting, and computational resources?**']
+2025-02-13 19:13:37,832 [INFO] Searching for sub-question 1: **What are the prerequisites and foundational knowledge required for training a large language model (LLM) using HuggingFace's Transformers library, particularly in the context of medical diagnosis?**
+2025-02-13 19:13:42,562 [INFO] Found 0 relevant pages for sub-question 1.
+2025-02-13 19:13:42,562 [INFO] Searching for sub-question 2: **How can you customize and preprocess a medical dataset for training an LLM, and what best practices should be followed to ensure data quality and relevance?**
+2025-02-13 19:13:47,442 [INFO] Found 0 relevant pages for sub-question 2.
+2025-02-13 19:13:47,442 [INFO] Searching for sub-question 3: **What are the specific Python code examples and configurations needed to fine-tune a pre-trained LLM from the HuggingFace repository for a medical diagnosis task?**
+2025-02-13 19:13:52,095 [INFO] Found 0 relevant pages for sub-question 3.
+2025-02-13 19:13:52,095 [INFO] Searching for sub-question 4: **What metrics and evaluation methods are most appropriate for assessing the performance of a fine-tuned LLM in medical diagnosis, and how can these be implemented in Python?**
+2025-02-13 19:13:57,476 [INFO] Found 0 relevant pages for sub-question 4.
+2025-02-13 19:13:57,476 [INFO] Searching for sub-question 5: **What are the common challenges and troubleshooting tips when training an LLM for medical diagnosis, and how can users effectively address issues related to model convergence, overfitting, and computational resources?**
+2025-02-13 19:14:00,910 [INFO] Found 0 relevant pages for sub-question 5.
+2025-02-13 19:14:00,911 [INFO] Starting research on: 'step-by-step guide with python code samples on training an open source LLM from HuggingFace repository for medical diagnosis use' (depth 2)
+2025-02-13 19:14:09,849 [INFO] Generated sub-questions (depth 2): ['**What are the foundational requirements and prerequisites for fine-tuning an open-source language model from the HuggingFace repository for medical diagnosis purposes?**', '**How can you curate and preprocess a medical dataset suitable for training a language model, and what specific considerations should be taken into account to ensure data quality and relevance?**', '**What are the step-by-step procedures for configuring the HuggingFace Transformers library to fine-tune the selected LLM on the medical dataset, including model selection, hyperparameter tuning, and optimizing training performance?**', '**What methods can be implemented for evaluating the performance of the fine-tuned model, and how can one interpret its predictions in the context of medical diagnosis to ensure clinical relevance and safety?**', '**What ethical considerations and regulatory compliances must be addressed when deploying an LLM for medical diagnosis, particularly in terms of data privacy, patient safety, and the potential for biases in machine learning models?**']
+2025-02-13 19:14:09,851 [INFO] Searching for sub-question 1: **What are the foundational requirements and prerequisites for fine-tuning an open-source language model from the HuggingFace repository for medical diagnosis purposes?**
+2025-02-13 19:14:14,719 [INFO] Found 0 relevant pages for sub-question 1.
+2025-02-13 19:14:14,720 [INFO] Searching for sub-question 2: **How can you curate and preprocess a medical dataset suitable for training a language model, and what specific considerations should be taken into account to ensure data quality and relevance?**
+2025-02-13 19:14:20,958 [INFO] Found 0 relevant pages for sub-question 2.
+2025-02-13 19:14:20,958 [INFO] Searching for sub-question 3: **What are the step-by-step procedures for configuring the HuggingFace Transformers library to fine-tune the selected LLM on the medical dataset, including model selection, hyperparameter tuning, and optimizing training performance?**
+2025-02-13 19:14:34,069 [INFO] Found 0 relevant pages for sub-question 3.
+2025-02-13 19:14:34,070 [INFO] Searching for sub-question 4: **What methods can be implemented for evaluating the performance of the fine-tuned model, and how can one interpret its predictions in the context of medical diagnosis to ensure clinical relevance and safety?**
+2025-02-13 19:14:38,340 [INFO] Found 0 relevant pages for sub-question 4.
+2025-02-13 19:14:38,340 [INFO] Searching for sub-question 5: **What ethical considerations and regulatory compliances must be addressed when deploying an LLM for medical diagnosis, particularly in terms of data privacy, patient safety, and the potential for biases in machine learning models?**
+2025-02-13 19:14:42,421 [INFO] Found 0 relevant pages for sub-question 5.
