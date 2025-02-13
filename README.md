@@ -7,7 +7,7 @@ Usage Notes:
 
 Install required packages:
 
-$ pip install openai aiohttp colorama pyfiglet python-dotenv
+$ pip install openai aiohttp colorama pyfiglet python-dotenv zenrows
 
 // Set your EXA_API_KEY and OPENAI_API_KEY in your environment or in a .env file.
 
