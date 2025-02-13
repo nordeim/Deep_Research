@@ -285,7 +285,7 @@ Ensure that the environment variables `EXA_API_KEY` and `OPENAI_API_KEY` are set
 
 To run the application, execute:
 ```bash
-python main.py
+python deep_research.py
 ```
 You will see a banner, be prompted for a research query, and after processing, the final report will be printed on the console.
 
@@ -312,7 +312,7 @@ The design places an emphasis on preserving inline citations. Both during the it
 
 ## 6. Conclusion
 
-The "Deeper Seeker v2" research agent is designed to simulate the workflow of a junior research analyst. With its asynchronous search capabilities, modular design, and iterative refinement process, the tool is capable of generating detailed, actionable reports with inline citations from multiple sources. The design focuses on reliability, clarity, and extensibility—allowing future enhancements and the integration of additional research tools. This specification provides a comprehensive understanding of the architecture, the logic behind each component, and the overall workflow, ensuring that both developers and stakeholders have a clear view of the system’s operation and potential for future growth.
+The "Deep Research" agent is designed to simulate the workflow of a junior research analyst. With its asynchronous search capabilities, modular design, and iterative refinement process, the tool is capable of generating detailed, actionable reports with inline citations from multiple sources. The design focuses on reliability, clarity, and extensibility—allowing future enhancements and the integration of additional research tools. This specification provides a comprehensive understanding of the architecture, the logic behind each component, and the overall workflow, ensuring that both developers and stakeholders have a clear view of the system’s operation and potential for future growth.
 
 ---
 
