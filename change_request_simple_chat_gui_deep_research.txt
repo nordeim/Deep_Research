@@ -1,0 +1,66 @@
+You goal is to carefully review both simple_chat_gui.py (attached) and deep_research.py (attached) and then integrate the deep research capabilities of `deep_research.py` into the GUI application `simple_chat_gui.py`, creating a new file `simple_chat_gui_deep_research.py`. Here's my plan and the reasoning behind it:
+
+**1. Understand the Existing Code:**
+
+*   **`simple_chat_gui.py`:**  A PyQt6-based chat application. It has features for:
+    *   Basic chat interface (displaying messages, input box).
+    *   API configuration (URL, key, model, system prompt, temperature).
+    *   Chat history export/import (JSON and HTML).
+    *   File attachments (displaying previews).
+    *   Emoji picker.
+    *   Session logging.
+    *   WhatsApp-style text formatting.
+    *   Uses the OpenAI API for chat responses.
+
+*   **`deep_research.py`:**  A script for conducting deep research on a given topic using:
+    *   ZenRows for web scraping (with JavaScript rendering and antibot features).
+    *   Google Search for finding relevant URLs.
+    *   BeautifulSoup for HTML parsing.
+    *   OpenAI API for:
+        *   Generating sub-questions.
+        *   Summarizing web page content.
+        *   Synthesizing multiple summaries into a final answer.
+    *   Recursive research with depth control.
+    *   Concurrent web scraping using `ThreadPoolExecutor`.
+
+**2. Integration Strategy:**
+
+The core idea is to trigger the deep research functionality from the GUI and display the results progressively in the chat window. Here's how I'll approach it:
+
+*   **Trigger:**  I'll add a "Deep Research" button to the GUI.  When clicked, it will:
+    *   Disable the regular "Send" button and the input box to prevent regular chat interactions during research.
+    *   Initiate the deep research process in a separate thread (to avoid freezing the GUI).
+
+*   **Deep Research Thread:**
+    *   This thread will run a modified version of the `deep_research` function from `deep_research.py`.
+    *   Instead of just printing the final report, it will yield intermediate results (sub-questions, summaries, and the final synthesis) back to the main thread.
+    *   It will use signals (PyQt's mechanism for inter-thread communication) to send these updates.
+
+*   **GUI Updates:**
+    *   The main thread will receive these signals and update the chat display.
+    *   Sub-questions will be displayed as AI messages.
+    *   Summaries will also be displayed as AI messages, perhaps with a note indicating they are summaries.
+    *   The final synthesis will be displayed as a comprehensive AI response.
+    *   Source URLs will also be displayed.
+    *   Error handling will be incorporated to gracefully handle issues during the research process (e.g., ZenRows API key missing, network errors).
+
+*   **Dependencies:**
+    *   The combined code will need all dependencies from *both* original files: `requests`, `openai`, `bs4`, `zenrows`, `PyQt6`, `yaml`, etc.
+    *   I'll make sure these are all imported correctly.
+
+*   **Configuration:**
+    *   The existing API configuration dialog in `simple_chat_gui.py` will be used.
+    *   I'll add a field for the ZenRows API key to this dialog.
+
+*   **Code Reuse:**
+    *   I'll reuse as much code as possible from both files.
+    *   I'll refactor `deep_research.py`'s `deep_research` function to be more modular and suitable for integration.
+    *   Helper functions (e.g., `scrape_page`, `summarize_content`, etc.) will be integrated directly.
+
+*   **User Experience:**
+    *  I will maintain the existing style.
+    *   I'll add clear visual cues to indicate that deep research is in progress.
+    *   I will try to display any intermediate results to show progress.
+
+**3. Implementation (simple_chat_gui_deep_research.py):**
+
